@@ -1,6 +1,9 @@
 package lyhna
 
-import "testing"
+import (
+	"encoding/json"
+	"testing"
+)
 
 func TestNewClient(t *testing.T) {
 	c := NewClient("test_key", WithBaseURL("http://localhost:3000"))
@@ -9,6 +12,37 @@ func TestNewClient(t *testing.T) {
 	}
 	if c.baseURL != "http://localhost:3000" {
 		t.Errorf("expected baseURL=http://localhost:3000, got %s", c.baseURL)
+	}
+}
+
+func TestBindRequestWireShape(t *testing.T) {
+	req := BindRequest{
+		ActionType:    "deploy",
+		Intent:        "release",
+		IntentVersion: "1.0",
+		Payload:       map[string]interface{}{"env": "prod"},
+	}
+
+	data, err := json.Marshal(req)
+	if err != nil {
+		t.Fatalf("marshal failed: %v", err)
+	}
+
+	var m map[string]interface{}
+	if err := json.Unmarshal(data, &m); err != nil {
+		t.Fatalf("unmarshal failed: %v", err)
+	}
+
+	for _, key := range []string{"action_type", "intent", "intent_version", "action_payload"} {
+		if _, ok := m[key]; !ok {
+			t.Errorf("expected key %q present in wire shape, but was absent", key)
+		}
+	}
+
+	for _, key := range []string{"authority_tier", "payload"} {
+		if _, ok := m[key]; ok {
+			t.Errorf("expected key %q absent from wire shape, but was present", key)
+		}
 	}
 }
 

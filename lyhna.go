@@ -14,7 +14,7 @@ import (
 const (
 	defaultBaseURL = "https://www.lyhna.com"
 	defaultTimeout = 10 * time.Second
-	version        = "0.1.0"
+	version        = "0.2.0"
 	userAgent      = "lyhna-go/" + version
 )
 
@@ -53,10 +53,6 @@ func NewClient(apiKey string, opts ...Option) *Client {
 
 // Bind calls POST /v1/bind and returns a Receipt.
 func (c *Client) Bind(ctx context.Context, req BindRequest) (Receipt, error) {
-	if req.AuthorityTier == "" {
-		req.AuthorityTier = "tier_0"
-	}
-
 	body, err := json.Marshal(req)
 	if err != nil {
 		return Receipt{}, &LyhnaError{Message: fmt.Sprintf("marshal request: %v", err)}
@@ -112,7 +108,7 @@ func (c *Client) do(ctx context.Context, method, path string, body []byte) ([]by
 		return nil, &LyhnaError{Message: fmt.Sprintf("create request: %v", err)}
 	}
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("x-api-key", c.apiKey)
+	req.Header.Set("Authorization", "Bearer "+c.apiKey)
 	req.Header.Set("User-Agent", userAgent)
 
 	resp, err := c.http.Do(req)

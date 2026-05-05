@@ -27,7 +27,8 @@ func main() {
     receipt, err := client.Bind(context.Background(), lyhna.BindRequest{
         ActionType:    "deploy_production",
         Intent:        "release_v3",
-        AuthorityTier: "tier_2",
+        IntentVersion: "1.0",
+        Payload:       map[string]interface{}{"env": "production"},
     })
     if err != nil {
         panic(err)
@@ -45,8 +46,9 @@ func main() {
 os.Setenv("LYHNA_API_KEY", "lyhna_...")
 
 receipt, err := lyhna.Bind(context.Background(), lyhna.BindRequest{
-    ActionType: "deploy_production",
-    Intent:     "release_v3",
+    ActionType:    "deploy_production",
+    Intent:        "release_v3",
+    IntentVersion: "1.0",
 })
 ```
 

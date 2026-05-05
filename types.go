@@ -4,8 +4,8 @@ package lyhna
 type BindRequest struct {
 	ActionType    string                 `json:"action_type"`
 	Intent        string                 `json:"intent"`
-	AuthorityTier string                 `json:"authority_tier,omitempty"`
-	Payload       map[string]interface{} `json:"payload,omitempty"`
+	IntentVersion string                 `json:"intent_version"`
+	Payload       map[string]interface{} `json:"action_payload,omitempty"`
 }
 
 // Receipt represents a LYHNA_RECEIPT_V2.
